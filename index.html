@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elemen Emosi Anak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --latar: #F1EEF6;
+    --permukaan: #FFFFFF;
+    --dakwat: #221A33;
+    --dakwat-lembut: #5E5870;
+    --garis: #DAD5E4;
+    --ungu: #6B3FB5;
+    --biru: #1F56C7;
+    --merah: #D2261F;
+    --hijau: #2E8B3D;
+    --kuning: #E3A400;
+    --paparan: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+    --teks: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--latar);
+    color: var(--dakwat);
+    font-family: var(--teks);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  [hidden] { display: none !important; }
+
+  .halaman { max-width: 560px; margin: 0 auto; padding: 28px 16px 56px; }
+
+  .jenama {
+    font-family: var(--paparan);
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-align: center;
+    margin: 0 0 4px;
+    color: var(--dakwat-lembut);
+  }
+
+  /* Roda lima warna elemen */
+  .roda { display: block; width: 220px; height: 220px; margin: 0 auto; }
+  .roda .gelang { fill: none; stroke: var(--garis); stroke-width: 2; stroke-dasharray: 3 7; stroke-linecap: round; }
+  .roda .biji { transition: opacity .5s ease; }
+  .roda .dalam {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform .5s cubic-bezier(.3,1.4,.5,1);
+  }
+  .roda .bulat { fill: currentColor; }
+  .roda.terpilih .biji { opacity: .38; }
+  .roda.terpilih .biji.ada { opacity: 1; }
+  .roda.terpilih .biji.ada .dalam { transform: scale(1.12); }
+  .roda.terpilih .biji.tiada { opacity: 1; }
+  .roda .biji.tiada .bulat { fill: var(--latar); stroke: currentColor; stroke-width: 2.5; stroke-dasharray: 4 4; }
+  .roda .biji.tiada .ikon { display: none; }
+
+
+  h1 {
+    font-family: var(--paparan);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 7.6vw, 2.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    text-align: center;
+    margin: 6px 0 8px;
+  }
+  .pengenalan { text-align: center; color: var(--dakwat-lembut); margin: 0 auto 24px; max-width: 36ch; }
+
+  .kad {
+    background: var(--permukaan);
+    border-radius: 22px;
+    padding: 24px 20px;
+    box-shadow: 0 1px 0 var(--garis), 0 18px 40px -28px rgba(34,26,51,.45);
+  }
+
+  h2 { font-family: var(--paparan); font-weight: 700; font-size: 1.35rem; line-height: 1.2; margin: 0 0 16px; }
+
+  .medan { margin-bottom: 16px; }
+  .baris { display: grid; grid-template-columns: 1fr 1.6fr; gap: 12px; }
+  label { display: block; font-weight: 600; font-size: .95rem; margin-bottom: 6px; }
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    background: #F8F6FB;
+    border: 2px solid var(--garis);
+    border-radius: 12px;
+    padding: 12px 14px;
+    min-height: 50px;
+    appearance: none;
+    -moz-appearance: textfield;
+  }
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23221A33' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+  }
+  input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible,
+  .suis input:focus-visible + .landasan {
+    outline: 3px solid var(--biru);
+    outline-offset: 2px;
+  }
+
+  /* Suis lahir sebelum Subuh */
+  .suis {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px; border: 2px solid var(--garis); border-radius: 14px;
+    cursor: pointer; margin-bottom: 18px;
+  }
+  .suis input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .landasan {
+    flex: none; width: 50px; height: 30px; border-radius: 30px;
+    background: #C9C3D6; position: relative; margin-top: 2px; transition: background .2s;
+  }
+  .landasan::after {
+    content: ""; position: absolute; top: 3px; left: 3px;
+    width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform .2s;
+  }
+  .suis input:checked + .landasan { background: var(--dakwat); }
+  .suis input:checked + .landasan::after { transform: translateX(20px); }
+  .suis .tajuk { display: block; font-weight: 600; }
+  .suis .nota { display: block; color: var(--dakwat-lembut); font-size: .92rem; }
+
+  .ralat {
+    background: #FDECEA; color: #96201A; border-radius: 12px;
+    padding: 12px 14px; font-weight: 500; margin-bottom: 16px;
+  }
+
+  button {
+    font-family: var(--paparan); font-weight: 700; font-size: 1.15rem;
+    border: 0; border-radius: 14px; padding: 14px 20px; min-height: 54px;
+    width: 100%; cursor: pointer;
+  }
+  .utama { background: var(--dakwat); color: #fff; }
+  .utama:hover { background: #120C1F; }
+  .kedua { background: transparent; color: var(--dakwat); border: 2px solid var(--garis); }
+  .kedua:hover { border-color: var(--dakwat); }
+  .kedua.bawah { margin-top: 18px; }
+
+  /* Keputusan */
+  .papan {
+    background: #15101F; color: #fff;
+    border-radius: 22px; padding: 24px 22px 14px; margin-top: 10px;
+    box-shadow: 0 18px 40px -24px rgba(34,26,51,.7);
+  }
+  .papan h1 {
+    display: flex; align-items: center; gap: 14px;
+    text-align: left; text-transform: uppercase;
+    font-size: 1.3rem; line-height: 1.2; letter-spacing: .01em;
+    margin: 0 0 20px;
+  }
+  .papan h1 svg { flex: none; }
+  .papan h1:focus { outline: none; }
+  .papan p { margin: 0 0 6px; font-weight: 600; font-size: 1.08rem; line-height: 1.4; }
+  .papan ol {
+    margin: 0 0 20px; padding-left: 2.4em;
+    font-family: var(--paparan); font-weight: 700; font-size: 1.3rem; line-height: 1.5;
+  }
+  .papan ol li::marker { color: #fff; }
+  .papan .semula {
+    background: transparent; color: #fff;
+    font-family: var(--teks); font-weight: 600; font-size: .92rem;
+    letter-spacing: .14em; text-transform: uppercase;
+    min-height: 46px; padding: 8px;
+  }
+  .papan .semula:hover { color: #C4B5FD; }
+  .papan .semula:focus-visible { outline-color: #C4B5FD; }
+  .kumpulan { margin-top: 26px; }
+  .kumpulan h2 { margin-bottom: 2px; }
+  .kumpulan > p { margin: 0 0 12px; color: var(--dakwat-lembut); font-size: .95rem; }
+
+  .elemen {
+    background: var(--permukaan);
+    border-radius: 18px;
+    border-left: 7px solid var(--el);
+    box-shadow: 0 1px 0 var(--garis);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .elemen.tiada { border-left-style: dashed; }
+  .elemen summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 16px 16px 14px;
+  }
+  .elemen summary::-webkit-details-marker { display: none; }
+  .elemen .nama { font-family: var(--paparan); font-weight: 700; font-size: 1.2rem; line-height: 1.15; display: block; }
+  .elemen .kata { color: var(--dakwat-lembut); font-size: .9rem; display: block; }
+  .elemen .anak-panah {
+    margin-left: auto; flex: none; width: 12px; height: 12px;
+    border-right: 2.5px solid var(--dakwat-lembut); border-bottom: 2.5px solid var(--dakwat-lembut);
+    transform: rotate(45deg); transition: transform .2s; margin-right: 4px;
+  }
+  .elemen[open] .anak-panah { transform: rotate(-135deg); }
+  .elemen .isi { padding: 0 18px 18px 16px; }
+  .elemen .isi > p { margin: 0 0 16px; }
+  h3 { font-family: var(--paparan); font-weight: 700; font-size: 1.08rem; margin: 0 0 4px; }
+  .elemen ul, .dinamik ul { margin: 0 0 16px; padding-left: 1.15em; }
+  .elemen ul:last-child { margin-bottom: 0; }
+  .elemen li, .dinamik li { margin-bottom: 4px; }
+  .elemen li::marker { color: var(--el); }
+
+  .dinamik { margin-top: 8px; }
+  .dinamik ul:last-child { margin-bottom: 0; }
+
+
+  .kaki { text-align: center; color: var(--dakwat-lembut); font-size: .88rem; margin: 24px auto 0; max-width: 42ch; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .roda .biji, .roda .dalam, .landasan, .landasan::after, .elemen .anak-panah { transition: none; }
+  }
+</style>
+</head>
+<body>
+<main class="halaman">
+  <p class="jenama" id="jenama"></p>
+
+  <svg class="roda" id="roda" viewBox="-100 -100 200 200" role="img" aria-label="Lima warna elemen emosi: Ungu, Biru, Merah, Hijau dan Kuning">
+    <circle class="gelang" r="60"/>
+    <g class="biji" data-el="ungu" transform="translate(0,-60)" style="color:#6B3FB5">
+      <g class="dalam">
+      <circle class="bulat" r="24"/>
+      <g class="ikon"><circle cy="-3" r="8" fill="#fff"/><rect x="-3.5" y="5" width="7" height="5" rx="1.5" fill="#fff"/></g>
+      </g>
+    </g>
+    <g class="biji" data-el="biru" transform="translate(57.1,-18.5)" style="color:#1F56C7">
+      <g class="dalam">
+      <circle class="bulat" r="24"/>
+      <g class="ikon"><path d="M0,10 C-14,0 -10,-11 0,-4 C10,-11 14,0 0,10Z" fill="#fff"/></g>
+      </g>
+    </g>
+    <g class="biji" data-el="merah" transform="translate(35.3,48.5)" style="color:#D2261F">
+      <g class="dalam">
+      <circle class="bulat" r="24"/>
+      <g class="ikon"><path d="M0,-12 C2,-6 9,-3 9,4 A9,9 0 0 1 -9,4 C-9,0 -6,-2 -5,-6 C-3,-3 -1,-4 0,-12Z" fill="#fff"/></g>
+      </g>
+    </g>
+    <g class="biji" data-el="hijau" transform="translate(-35.3,48.5)" style="color:#2E8B3D">
+      <g class="dalam">
+      <circle class="bulat" r="24"/>
+      <g class="ikon"><path d="M-9,9 C-9,-4 0,-11 10,-10 C11,0 4,9 -9,9Z" fill="#fff"/><path d="M-6,6 L5,-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+      </g>
+    </g>
+    <g class="biji" data-el="kuning" transform="translate(-57.1,-18.5)" style="color:#E3A400">
+      <g class="dalam">
+      <circle class="bulat" r="24"/>
+      <g class="ikon"><path d="M-13,8 L-4,-8 L1,0 L4,-4 L13,8Z" fill="#fff" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></g>
+      </g>
+    </g>
+  </svg>
+
+  <!-- Skrin kod akses (hanya muncul jika kodAkses diisi dalam TETAPAN) -->
+  <section id="skrin-kod" hidden>
+    <h1>Masukkan kod akses</h1>
+    <p class="pengenalan">Kod akses ada bersama buku atau mesej pembelian anda.</p>
+    <form class="kad" id="borang-kod" novalidate>
+      <div class="medan">
+        <label for="kod">Kod akses</label>
+        <input type="text" id="kod" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      </div>
+      <div class="ralat" id="ralat-kod" role="alert" hidden></div>
+      <button type="submit" class="utama">Buka</button>
+    </form>
+  </section>
+
+  <!-- Skrin borang -->
+  <section id="skrin-borang" hidden>
+    <h1>Apakah warna elemen emosi anak anda?</h1>
+    <p class="pengenalan">Isi maklumat lahir anak untuk melihat elemen yang menonjol dan elemen yang perlu dibantu.</p>
+    <form class="kad" id="borang" novalidate>
+      <h2>Maklumat lahir anak</h2>
+      <div class="baris">
+        <div class="medan">
+          <label for="hari">Hari</label>
+          <input type="number" id="hari" inputmode="numeric" min="1" max="31" placeholder="1–31">
+        </div>
+        <div class="medan">
+          <label for="bulan">Bulan</label>
+          <select id="bulan">
+            <option value="">Pilih bulan</option>
+            <option value="1">Januari</option>
+            <option value="2">Februari</option>
+            <option value="3">Mac</option>
+            <option value="4">April</option>
+            <option value="5">Mei</option>
+            <option value="6">Jun</option>
+            <option value="7">Julai</option>
+            <option value="8">Ogos</option>
+            <option value="9">September</option>
+            <option value="10">Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Disember</option>
+          </select>
+        </div>
+      </div>
+      <div class="medan">
+        <label for="tahun">Tahun</label>
+        <input type="number" id="tahun" inputmode="numeric" min="1900" placeholder="Contoh: 2019">
+      </div>
+      <label class="suis">
+        <input type="checkbox" id="subuh">
+        <span class="landasan" aria-hidden="true"></span>
+        <span>
+          <span class="tajuk">Lahir antara 12 malam hingga sebelum Subuh</span>
+          <span class="nota">Jika ya, tarikh hari sebelumnya digunakan untuk pengiraan.</span>
+        </span>
+      </label>
+      <div class="ralat" id="ralat" role="alert" hidden></div>
+      <button type="submit" class="utama">Tunjukkan elemen anak</button>
+    </form>
+  </section>
+
+  <!-- Skrin keputusan -->
+  <section id="skrin-keputusan" hidden>
+    <div class="papan">
+      <h1 id="k-tajuk" tabindex="-1">
+        <svg viewBox="0 0 40 48" width="34" height="41" aria-hidden="true"><path d="M20 2 36 18 20 46 4 18Z" fill="#8B5CF6"/><path d="M20 2 36 18H4Z" fill="#C4B5FD"/><path d="M20 2 12 18l8 28 8-28Z" fill="#A78BFA" opacity=".7"/></svg>
+        <span>Keputusan warna elemen emosi anak</span>
+      </h1>
+      <div id="k-ringkas"></div>
+      <button type="button" class="semula" data-semula>&#8634; Kira semula</button>
+    </div>
+    <div id="k-isi"></div>
+    <button type="button" class="kedua bawah" data-semula>Kira semula</button>
+  </section>
+
+  <p class="kaki">Penerangan diringkaskan daripada buku <em>Rahsia Emosi Si Kecil</em>. Rujuk Bab 3, 4 dan 5 untuk huraian penuh. Ini panduan umum, bukan penilaian saintifik atau nasihat profesional.</p>
+</main>
+
+<script>
+/*TERAS-MULA*/
+/* ============================================================
+   TETAPAN — ubah di sini sahaja
+   ============================================================ */
+const TETAPAN = {
+  // Nama jenama anda, dipaparkan di bahagian atas
+  jenama: "Elemen Emosi Anak",
+
+  // Kod akses. Biarkan kosong [] untuk buka kepada semua.
+  // Contoh: ["ABCD-1234", "WXYZ-5678"]
+  // Pautan dengan kod: elemen-anak.html?code=ABCD-1234
+  kodAkses: []
+};
+
+/* ============================================================
+   FORMULA SEMENTARA — GANTIKAN DENGAN FORMULA SEBENAR ANDA
+   Ini BUKAN formula kalkulator asal. Ia hanya pengisi tempat
+   supaya page boleh diuji.
+
+   Cara ia berfungsi sekarang:
+   1. Ambil digit hari, bulan dan dua digit akhir tahun (sifar diabaikan).
+   2. Setiap digit dipadankan kepada satu warna (PETA_DIGIT).
+   3. Warna yang muncul sekurang-kurangnya sekali = kecenderungan.
+      Warna yang tidak muncul langsung = tiada.
+      (Setiap warna masuk salah satu senarai, seperti dalam buku.)
+   4. Jika beza antara warna paling banyak dan paling sedikit
+      tidak lebih daripada 1 = Anak Dinamik.
+
+   Untuk guna formula sebenar, tulis semula fungsi kiraElemen()
+   supaya ia memulangkan { dinamik, ada: [...], tiada: [...] }.
+   ============================================================ */
+const PETA_DIGIT = {
+  1: "kuning", 2: "biru", 3: "merah", 4: "hijau", 5: "ungu",
+  6: "kuning", 7: "ungu", 8: "hijau", 9: "merah"
+};
+const SUSUNAN = ["ungu", "biru", "merah", "hijau", "kuning"];
+
+function kiraElemen(tarikh) {
+  const teks = String(tarikh.getDate()) + String(tarikh.getMonth() + 1)
+             + String(tarikh.getFullYear()).slice(-2);
+  const bilangan = { ungu: 0, biru: 0, merah: 0, hijau: 0, kuning: 0 };
+  teks.split("").forEach((d) => { if (PETA_DIGIT[d]) bilangan[PETA_DIGIT[d]]++; });
+
+  const nilai = SUSUNAN.map((k) => bilangan[k]);
+  const dinamik = Math.max(...nilai) - Math.min(...nilai) <= 1;
+  return {
+    dinamik: dinamik,
+    ada: dinamik ? [] : SUSUNAN.filter((k) => bilangan[k] >= 1),
+    tiada: dinamik ? [] : SUSUNAN.filter((k) => bilangan[k] === 0),
+    bilangan: bilangan
+  };
+}
+
+/* ============================================================
+   KANDUNGAN — diringkaskan daripada nota Rahsia Emosi Si Kecil.
+   "ada"   = anak mempunyai kecenderungan elemen ini (Bab 3)
+   "tiada" = anak tiada elemen ini (Bab 4)
+   ============================================================ */
+const WARNA = {
+  ungu: {
+    nama: "Ungu",
+    hex: "#6B3FB5",
+    kata: "Fikiran, kefahaman, logik",
+    ada: {
+      ringkasan: "Anak yang kuat berfikir dan suka memahami sesuatu sampai ke akarnya. Dia memproses dahulu sebelum memberi respons, jadi diamnya selalunya tanda dia sedang memerhati, bukan tidak peduli. Dia mahu tahu “kenapa” sebelum menerima sesuatu.",
+      potensi: [
+        "Berfikir sebelum bertindak",
+        "Suka bertanya dan mencari sebab",
+        "Tajam memerhati dan menganalisis",
+        "Berhati-hati membuat keputusan",
+        "Belajar paling baik melalui kefahaman, bukan paksaan"
+      ],
+      cabaran: [
+        "Terlalu banyak berfikir sampai serabut dan penat mental",
+        "Sukar meluahkan apa yang ada dalam fikiran",
+        "Mudah terasa apabila pendapatnya tidak dihargai",
+        "Menolak atau diam apabila dipaksa tanpa penjelasan",
+        "Boleh jadi keras kepala apabila sudah yakin",
+        "Kadang-kadang lambat membuat keputusan atau bertangguh"
+      ],
+      sokongan: [
+        "Beri ruang untuk dia bercakap dan berkongsi pendapat",
+        "Jangan cepat memotong atau menolak ideanya",
+        "Terangkan sebab di sebalik setiap arahan",
+        "Beri masa untuk memproses sebelum meminta jawapan",
+        "Bantu dia belajar meluahkan fikiran dengan yakin",
+        "Hargai usahanya berfikir dan memberi pandangan"
+      ]
+    },
+    tiada: {
+      ringkasan: "Anak ini tidak gemar berfikir panjang sebelum bertindak. Keputusannya banyak mengikut apa yang dirasa pada waktu itu, jadi dia boleh nampak terlalu santai, kurang serius atau tiada hala tuju. Ini bukan tanda dia tidak bijak. Dia perlukan bimbingan untuk melihat sesuatu dengan lebih mendalam dan teratur.",
+      cabaran: [
+        "Bertindak tanpa menimbang panjang",
+        "Sukar melihat kesan jangka panjang",
+        "Membuat keputusan mengikut emosi semasa",
+        "Kurang merancang",
+        "Cepat bosan apabila perlu berfikir mendalam atau banyak analisis",
+        "Mudah berubah fikiran mengikut keadaan"
+      ],
+      sokongan: [
+        "Biasakan beri masa berfikir sebelum dia membuat pilihan",
+        "Tanya soalan yang membantu dia nampak kesan tindakannya, contohnya “Kamu rasa apa akan jadi selepas ini?”",
+        "Bantu dia buat perancangan dan matlamat kecil setiap hari",
+        "Guna cerita, pengalaman dan perbualan santai, bukan ceramah panjang",
+        "Puji apabila dia membuat keputusan yang baik",
+        "Kurangkan berleter kerana dia mudah hilang fokus apabila ditekan"
+      ]
+    }
+  },
+
+  biru: {
+    nama: "Biru",
+    hex: "#1F56C7",
+    kata: "Kasih sayang, empati, hubungan",
+    ada: {
+      ringkasan: "Anak berhati lembut yang sangat menghargai kasih sayang dan hubungan dengan orang sekeliling. Pelukan, pujian, didengari dan masa bersama keluarga amat bermakna baginya. Dia mahu emosinya dirasai dan difahami, bukan sekadar didengar.",
+      potensi: [
+        "Penyayang dan mengambil berat tentang orang lain",
+        "Pandai membaca perasaan orang di sekelilingnya",
+        "Suka membantu dan membuat orang rasa dihargai",
+        "Mudah bekerjasama dan menjaga hubungan",
+        "Sangat menghargai keluarga dan persahabatan"
+      ],
+      cabaran: [
+        "Mudah terasa apabila dimarahi dengan nada keras",
+        "Cepat sedih apabila rasa tidak dipedulikan",
+        "Sukar melupakan kata-kata yang menyakitkan hati",
+        "Cenderung memendam perasaan",
+        "Takut kehilangan orang yang disayangi",
+        "Kadang-kadang terlalu mengalah demi menjaga hubungan",
+        "Perlu masa untuk membuka diri dengan orang yang belum dia percaya"
+      ],
+      sokongan: [
+        "Bercakap dengan nada yang lembut",
+        "Beri perhatian penuh apabila dia mahu bercerita",
+        "Jangan malukan dia di depan orang lain",
+        "Banyakkan pelukan dan kata-kata penghargaan",
+        "Ajar dia cara meluahkan perasaan dengan betul",
+        "Yakinkan dia tetap disayangi walaupun selepas ditegur"
+      ]
+    },
+    tiada: {
+      ringkasan: "Anak ini lebih selesa dalam dunianya sendiri dan kurang selesa dengan suasana yang terlalu ramai, terlalu emosional atau banyak interaksi sosial. Dia boleh nampak pendiam, kurang mesra atau “tidak kisah”, tetapi dia tetap ada perasaan. Dia cuma kurang mahir memulakan hubungan dan menunjukkan kasih sayang.",
+      cabaran: [
+        "Mengambil masa untuk menyesuaikan diri dalam kumpulan besar",
+        "Kurang pandai memulakan perbualan",
+        "Nampak kaku dalam pergaulan",
+        "Tidak pandai menunjukkan kasih sayang",
+        "Kadang-kadang lebih suka bersendirian",
+        "Sukar memahami emosi orang lain",
+        "Hanya bergaul dengan orang yang dia sudah rapat atau selesa"
+      ],
+      sokongan: [
+        "Libatkan dia dalam aktiviti berkumpulan yang berstruktur seperti sukan, kelas atau projek",
+        "Jangan paksa dia bercakap atau berkawan secara mendadak",
+        "Selalu berbual dengannya untuk membina keyakinan sedikit demi sedikit",
+        "Puji setiap sikap prihatin yang ditunjukkan walaupun kecil",
+        "Ajar dia memahami perasaan orang lain melalui situasi harian",
+        "Tunjukkan contoh komunikasi dan kasih sayang dalam keluarga"
+      ]
+    }
+  },
+
+  merah: {
+    nama: "Merah",
+    hex: "#D2261F",
+    kata: "Semangat, perasaan, tindakan",
+    ada: {
+      ringkasan: "Anak yang penuh semangat, aktif dan spontan, dengan emosi yang bergerak laju. Dia suka bergerak dan mencuba, dan tidak tahan lama dalam keadaan pasif. Di sebalik luaran yang kuat, hatinya sensitif. Ada yang meluahkan emosi secara terbuka, ada yang memendam, dan ada yang mudah merajuk atau menangis.",
+      potensi: [
+        "Aktif dan cepat bertindak apabila mahukan sesuatu",
+        "Semangat mencuba yang tinggi",
+        "Mudah teruja dengan pengalaman baharu",
+        "Suka aktiviti fizikal dan perkara yang mencabar",
+        "Berdaya saing dan suka membuktikan kemampuan diri",
+        "Mudah menjadi penggerak dalam kumpulan",
+        "Imaginasi dan impian yang besar"
+      ],
+      cabaran: [
+        "Cepat bertindak mengikut emosi",
+        "Mudah terpengaruh dengan provokasi",
+        "Cepat bosan dengan rutin yang perlahan",
+        "Cepat marah apabila rasa dicabar atau tidak difahami",
+        "Bercakap atau bertindak tanpa berfikir panjang",
+        "Sukar menunggu dan mudah tertekan apabila sesuatu tidak ikut kehendaknya",
+        "Mudah merajuk atau kecewa walaupun nampak berani di luar"
+      ],
+      sokongan: [
+        "Beri ruang melepaskan tenaga melalui aktiviti fizikal atau sukan",
+        "Guna komunikasi yang jelas dan tegas, tetapi tidak keras",
+        "Elakkan provokasi dan sindiran",
+        "Tenangkan emosinya dahulu, nasihat kemudian",
+        "Jangan terus menghukum ketika dia sedang emosi",
+        "Ajar dia berfikir sebelum bertindak ketika emosi tinggi",
+        "Puji apabila dia berjaya mengawal diri"
+      ]
+    },
+    tiada: {
+      ringkasan: "Anak ini lebih perlahan untuk bertindak dan kurang dorongan untuk memulakan sesuatu sendiri. Dia selesa menunggu arahan atau menunggu “mood”, jadi boleh nampak pasif. Dia bukan malas. Dia bergerak mengikut rentak emosinya sendiri dan perlukan dorongan yang lembut, bukan tekanan.",
+      cabaran: [
+        "Lambat bermula walaupun tahu apa yang perlu dibuat",
+        "Suka menunggu arahan daripada memulakan sendiri",
+        "Mudah bertangguh apabila tiada dorongan emosi",
+        "Kurang spontan dan mudah kekal dalam zon selesa",
+        "Tidak suka tekanan atau keadaan yang mendesak",
+        "Semakin pasif dan menarik diri jika selalu dimarahi, didesak atau dibandingkan"
+      ],
+      sokongan: [
+        "Beri tugasan kecil yang jelas dan mudah difahami",
+        "Bantu dia bermula sedikit demi sedikit dan jadualkan aktiviti hariannya",
+        "Dorong dengan kata-kata lembut yang membina semangat",
+        "Elakkan terlalu banyak memaksa atau mendesak",
+        "Jangan label dia malas; ajar dia menepati masa",
+        "Beri peluang dia merasa puas menyiapkan sesuatu sendiri",
+        "Raikan usaha kecil walaupun perubahannya perlahan"
+      ]
+    }
+  },
+
+  hijau: {
+    nama: "Hijau",
+    hex: "#2E8B3D",
+    kata: "Teratur, perancangan, kesempurnaan",
+    ada: {
+      ringkasan: "Anak yang perlukan rasa selamat, tersusun dan stabil. Dia tenang apabila tahu langkah demi langkah apa yang akan berlaku, dan tidak selesa dengan keadaan yang kelam-kabut, mendadak atau berisiko. Sikap berhati-hatinya ialah cara dia memastikan semuanya terkawal.",
+      potensi: [
+        "Kemas dan tersusun",
+        "Merancang sebelum melakukan sesuatu",
+        "Teliti dan tekun",
+        "Berhati-hati dan tidak terburu-buru mengambil risiko",
+        "Bertanggungjawab dan boleh diharap",
+        "Berdisiplin apabila suasananya tenang dan stabil"
+      ],
+      cabaran: [
+        "Terganggu apabila sesuatu tidak berjalan seperti dirancang",
+        "Sukar tenang dalam keadaan kelam-kabut",
+        "Mudah overthinking sebelum bertindak",
+        "Takut melakukan kesilapan",
+        "Terlalu memikirkan hasil sebelum bermula",
+        "Sukar menerima perubahan",
+        "Mudah kecewa dengan diri sendiri apabila hasil tidak seperti diharapkan"
+      ],
+      sokongan: [
+        "Beri arahan yang jelas dan mudah difahami",
+        "Elakkan terlalu banyak perubahan mendadak",
+        "Bantu dia menyusun langkah satu persatu",
+        "Terangkan sebab sesuatu perlu dilakukan",
+        "Ajar bahawa kesilapan ialah sebahagian daripada belajar",
+        "Puji usahanya, bukan hanya hasil yang sempurna",
+        "Beri ruang bertenang apabila emosinya terganggu"
+      ]
+    },
+    tiada: {
+      ringkasan: "Anak ini tidak suka terlalu banyak aturan atau rutin yang sama setiap hari. Dia hidup mengikut apa yang dirasa pada waktu itu, dan hanya boleh fokus lama pada perkara yang benar-benar diminatinya. Dia bukan malas. Emosinya kurang pada disiplin dan kehidupan yang terlalu tersusun, dan dia mudah rasa sesak apabila terlalu dikawal.",
+      cabaran: [
+        "Sukar kekal dalam rutin yang sama terlalu lama",
+        "Tidak suka peraturan atau jadual yang ketat",
+        "Mudah bosan dengan cara belajar yang terlalu formal",
+        "Sukar fokus pada perkara yang tidak diminati",
+        "Kehidupan harian kadang-kadang nampak tidak teratur",
+        "Lebih suka ikut mood atau perasaan semasa",
+        "Cepat hilang minat apabila terasa dipaksa"
+      ],
+      sokongan: [
+        "Jadi “partner” dalam hidupnya, bukan sekadar pemberi arahan",
+        "Cari apa yang benar-benar menarik minatnya dan guna itu sebagai pintu masuk untuk belajar",
+        "Buat jadual harian bersama-sama dengannya",
+        "Beri peluang membuat pilihan kecil supaya dia rasa dihargai",
+        "Guna cara belajar yang praktikal dan pengalaman sebenar",
+        "Terangkan kenapa sesuatu itu penting, bukan hanya menyuruh",
+        "Bina disiplin sedikit demi sedikit dan raikan usaha kecilnya"
+      ]
+    }
+  },
+
+  kuning: {
+    nama: "Kuning",
+    hex: "#E3A400",
+    kata: "Ketegasan, keyakinan, kepimpinan",
+    ada: {
+      ringkasan: "Anak yang tegas dan yakin, dengan kehadiran yang kuat. Dia tahu apa yang dia mahu, ada pendirian sendiri dan berani bersuara. Di sebalik keyakinan itu, dia sangat perlukan perhatian, penghargaan dan rasa diterima. Emosinya mudah terganggu apabila rasa tidak dihargai.",
+      potensi: [
+        "Yakin dengan diri sendiri",
+        "Cepat membuat keputusan",
+        "Berani memberi pendapat",
+        "Berpendirian dan tidak mudah terikut rakan sebaya",
+        "Cepat belajar dan tidak mudah berputus asa",
+        "Semangat kepimpinan semula jadi"
+      ],
+      cabaran: [
+        "Mudah bertindak balas apabila rasa tidak dihormati",
+        "Mudah terasa apabila dipandang rendah",
+        "Kadang-kadang suka mengawal atau mengarahkan orang lain",
+        "Kuat mempertahankan pendapat sendiri, kadang-kadang sampai degil",
+        "Sukar menerima teguran yang keras",
+        "Mudah malu atau tercabar apabila ditegur di depan orang, lalu mempertahankan diri walaupun tahu dia silap"
+      ],
+      sokongan: [
+        "Elakkan menegur dia di depan orang ramai",
+        "Bercakap dengan nada yang tenang dan hormat",
+        "Beri ruang dia menerangkan perasaannya",
+        "Elakkan memaksa atau menjatuhkan maruahnya",
+        "Beri kepercayaan supaya sifat kepimpinannya tersalur dengan baik",
+        "Puji usaha dan sikap bertanggungjawabnya",
+        "Ajar bahawa pemimpin juga perlu mendengar pandangan orang lain"
+      ]
+    },
+    tiada: {
+      ringkasan: "Anak ini sederhana, banyak mengikut dan selesa tidak menonjolkan diri. Dia nampak “ok sahaja” dengan semua keadaan, tetapi sebenarnya sukar menyuarakan apa yang dirasa dan mudah terpengaruh dengan orang sekeliling. Dia belum belajar percaya pada suaranya sendiri.",
+      cabaran: [
+        "Lebih suka mengikut daripada memimpin",
+        "Tidak selesa menjadi perhatian",
+        "Mudah rendah diri apabila dibandingkan dengan orang lain",
+        "Takut mengambil risiko atau mencuba sesuatu yang baharu",
+        "Sukar menyuarakan pendapat dan berkata “tidak”",
+        "Memendam perasaan demi menjaga hati orang lain",
+        "Mudah dipengaruhi atau diambil kesempatan"
+      ],
+      sokongan: [
+        "Dengar dengan sabar apabila dia bercerita atau meluahkan perasaan",
+        "Beri pilihan kecil setiap hari supaya dia belajar membuat keputusan",
+        "Puji usahanya walaupun kecil",
+        "Jangan bandingkan dia dengan orang lain; bandingkan dengan dirinya yang semalam",
+        "Beri arahan yang jelas dan ringkas, tanpa mendesak",
+        "Yakinkan dia bahawa pendapat dan perasaannya penting",
+        "Kekalkan rutin dan kasih sayang yang konsisten supaya dia rasa selamat"
+      ]
+    }
+  }
+};
+
+/* Anak Dinamik (Bab 5) */
+const DINAMIK = {
+  ringkasan: "Semua elemen emosi anak ini berada pada tahap sederhana. Tiada yang terlalu tinggi atau terlalu lemah. Emosinya seimbang, fleksibel dan mudah menyesuaikan diri, jadi dia lebih mudah dibimbing.",
+  biasanya: [
+    "Lebih mudah menerima teguran",
+    "Mudah menyesuaikan diri dalam banyak keadaan",
+    "Mudah bekerjasama",
+    "Tidak terlalu ekstrem dalam emosi",
+    "Jarang memberontak dengan kuat"
+  ],
+  perlukan: [
+    "Galakan dan perhatian",
+    "Sokongan emosi",
+    "Dorongan yang konsisten daripada orang sekeliling",
+    "Bantuan untuk mengenali kekuatan dirinya supaya dia lebih yakin dan jelas hala tuju"
+  ]
+};
+
+const NAMA_BULAN = ["Januari","Februari","Mac","April","Mei","Jun","Julai","Ogos","September","Oktober","November","Disember"];
+
+/* Semak tarikh dan pulangkan tarikh yang dikira (atau mesej ralat). */
+function tarikhDikira(hari, bulan, tahun, sebelumSubuh, hariIni) {
+  if (!Number.isInteger(hari) || !Number.isInteger(bulan) || !Number.isInteger(tahun)) {
+    return { ralat: "Isi hari, bulan dan tahun lahir." };
+  }
+  if (tahun < 1900 || tahun > 9999) {
+    return { ralat: "Tulis tahun lahir dengan 4 digit, contohnya 2019." };
+  }
+  const t = new Date(tahun, bulan - 1, hari);
+  if (hari < 1 || t.getFullYear() !== tahun || t.getMonth() !== bulan - 1 || t.getDate() !== hari) {
+    return { ralat: "Tarikh " + hari + " tidak wujud dalam bulan " + NAMA_BULAN[bulan - 1] + " " + tahun + "." };
+  }
+  if (t > hariIni) {
+    return { ralat: "Tarikh lahir tidak boleh pada masa hadapan." };
+  }
+  if (sebelumSubuh) t.setDate(t.getDate() - 1);
+  return { tarikh: t };
+}
+/*TERAS-TAMAT*/
+
+/* ============================================================
+   Antara muka
+   ============================================================ */
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const roda = $("roda");
+  const skrin = { kod: $("skrin-kod"), borang: $("skrin-borang"), keputusan: $("skrin-keputusan") };
+
+  $("jenama").textContent = TETAPAN.jenama;
+  document.title = TETAPAN.jenama;
+
+  function tunjuk(nama) {
+    Object.keys(skrin).forEach((k) => { skrin[k].hidden = k !== nama; });
+  }
+
+  function tandaRoda(hasil) {
+    const aktif = !!hasil && !hasil.dinamik;
+    roda.classList.toggle("terpilih", aktif);
+    roda.querySelectorAll(".biji").forEach((b) => {
+      b.classList.toggle("ada", aktif && hasil.ada.includes(b.dataset.el));
+      b.classList.toggle("tiada", aktif && hasil.tiada.includes(b.dataset.el));
+    });
+  }
+
+  /* ---- Kod akses ---- */
+  const bersih = (s) => String(s || "").trim().toUpperCase();
+  const senaraiKod = TETAPAN.kodAkses.map(bersih).filter(Boolean);
+  const kodSah = (s) => senaraiKod.includes(bersih(s));
+
+  function ingat(kod) { try { sessionStorage.setItem("kodAkses", kod); } catch (e) {} }
+  function diingat() { try { return sessionStorage.getItem("kodAkses"); } catch (e) { return null; } }
+
+  if (senaraiKod.length === 0) {
+    tunjuk("borang");
+  } else {
+    const dariPautan = new URLSearchParams(location.search).get("code");
+    if (kodSah(dariPautan)) { ingat(bersih(dariPautan)); tunjuk("borang"); }
+    else if (kodSah(diingat())) { tunjuk("borang"); }
+    else { tunjuk("kod"); }
+  }
+
+  $("borang-kod").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const nilai = $("kod").value;
+    const ralat = $("ralat-kod");
+    if (kodSah(nilai)) {
+      ingat(bersih(nilai));
+      ralat.hidden = true;
+      tunjuk("borang");
+    } else {
+      ralat.textContent = bersih(nilai) ? "Kod ini tidak sah. Semak ejaan dan cuba lagi." : "Taip kod akses anda.";
+      ralat.hidden = false;
+    }
+  });
+
+  /* ---- Pembina paparan ---- */
+  function el(tag, kelas, teks) {
+    const n = document.createElement(tag);
+    if (kelas) n.className = kelas;
+    if (teks) n.textContent = teks;
+    return n;
+  }
+
+  function senarai(tajuk, butiran) {
+    const f = document.createDocumentFragment();
+    f.appendChild(el("h3", "", tajuk));
+    const ul = el("ul");
+    butiran.forEach((t) => ul.appendChild(el("li", "", t)));
+    f.appendChild(ul);
+    return f;
+  }
+
+  function kadElemen(kunci, jenis, buka) {
+    const w = WARNA[kunci];
+    const data = w[jenis];
+    const d = el("details", "elemen " + jenis);
+    d.style.setProperty("--el", w.hex);
+    d.open = buka;
+
+    const s = el("summary");
+    const label = el("span");
+    label.appendChild(el("span", "nama", (jenis === "tiada" ? "Tiada elemen " : "Elemen ") + w.nama));
+    label.appendChild(el("span", "kata", w.kata));
+    s.appendChild(label);
+    s.appendChild(el("span", "anak-panah"));
+    d.appendChild(s);
+
+    const isi = el("div", "isi");
+    isi.appendChild(el("p", "", data.ringkasan));
+    if (data.potensi) isi.appendChild(senarai("Potensi", data.potensi));
+    isi.appendChild(senarai("Cabaran", data.cabaran));
+    isi.appendChild(senarai("Cara menyokong anak ini", data.sokongan));
+    d.appendChild(isi);
+    return d;
+  }
+
+  function kumpulan(tajuk, nota, kunciKunci, jenis, bukaPertama) {
+    const k = el("div", "kumpulan");
+    k.appendChild(el("h2", "", tajuk));
+    k.appendChild(el("p", "", nota));
+    kunciKunci.forEach((kunci, i) => k.appendChild(kadElemen(kunci, jenis, bukaPertama && i === 0)));
+    return k;
+  }
+
+  /* Warna teks yang cukup terang di atas papan gelap */
+  const TERANG = { ungu: "#C9A4FF", biru: "#5BC0F5", merah: "#FF7A70", hijau: "#5BD96A", kuning: "#FFD93B" };
+
+  function senaraiWarna(kunciKunci) {
+    const ol = el("ol");
+    kunciKunci.forEach((k) => {
+      const li = el("li");
+      const s = el("span", "", WARNA[k].nama);
+      s.style.color = TERANG[k];
+      li.appendChild(s);
+      ol.appendChild(li);
+    });
+    return ol;
+  }
+
+  function paparKeputusan(hasil, tarikh, sebelumSubuh) {
+    const ringkas = $("k-ringkas");
+    const isi = $("k-isi");
+    ringkas.textContent = "";
+    isi.textContent = "";
+
+    if (hasil.dinamik) {
+      const p = el("p");
+      p.append("Anak ini adalah seorang yang ");
+      const s = el("span", "", "dinamik");
+      s.style.color = TERANG.ungu;
+      p.appendChild(s);
+      p.append(". Untuk penerangan, rujuk bahagian \u201CAnak Dinamik\u201D (bab 5).");
+      p.style.marginBottom = "20px";
+      ringkas.appendChild(p);
+
+      const k = el("div", "kumpulan");
+      k.appendChild(el("h2", "", "Anak Dinamik"));
+      k.appendChild(el("p", "", "Seimbang, fleksibel dan mudah menyesuaikan diri."));
+      const d = el("div", "kad dinamik");
+      d.appendChild(el("p", "", DINAMIK.ringkasan));
+      d.appendChild(senarai("Anak Dinamik selalunya", DINAMIK.biasanya));
+      d.appendChild(senarai("Dia tetap memerlukan", DINAMIK.perlukan));
+      k.appendChild(d);
+      isi.appendChild(k);
+    } else {
+      if (hasil.ada.length) {
+        ringkas.appendChild(el("p", "", "Anak ini mempunyai kecenderungan elemen warna (bab 3):"));
+        ringkas.appendChild(senaraiWarna(hasil.ada));
+        isi.appendChild(kumpulan(
+          "Penerangan kecenderungan elemen",
+          "Tekan setiap elemen untuk membaca. Huraian penuh dalam Bab 3.",
+          hasil.ada, "ada", false));
+      }
+      if (hasil.tiada.length) {
+        ringkas.appendChild(el("p", "", hasil.ada.length
+          ? "Anak ini juga tiada elemen warna (bab 4):"
+          : "Anak ini tiada elemen warna (bab 4):"));
+        ringkas.appendChild(senaraiWarna(hasil.tiada));
+        isi.appendChild(kumpulan(
+          "Penerangan elemen yang tiada",
+          "Aspek yang perlu diberi perhatian dan dibantu. Huraian penuh dalam Bab 4.",
+          hasil.tiada, "tiada", false));
+      }
+    }
+  }
+
+  /* ---- Borang ---- */
+  function nombor(id) {
+    const v = $(id).value.trim();
+    return /^\d+$/.test(v) ? parseInt(v, 10) : NaN;
+  }
+
+  $("borang").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const ralat = $("ralat");
+    const sebelumSubuh = $("subuh").checked;
+    const semak = tarikhDikira(nombor("hari"), nombor("bulan"), nombor("tahun"), sebelumSubuh, new Date());
+    if (semak.ralat) {
+      ralat.textContent = semak.ralat;
+      ralat.hidden = false;
+      return;
+    }
+    ralat.hidden = true;
+
+    const hasil = kiraElemen(semak.tarikh);
+    paparKeputusan(hasil, semak.tarikh, sebelumSubuh);
+    tandaRoda(hasil);
+    tunjuk("keputusan");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    $("k-tajuk").focus({ preventScroll: true });
+  });
+
+  function kiraSemula() {
+    $("borang").reset();
+    $("ralat").hidden = true;
+    tandaRoda(null);
+    tunjuk("borang");
+    window.scrollTo({ top: 0 });
+    $("hari").focus();
+  }
+  document.querySelectorAll("[data-semula]").forEach((btn) => btn.addEventListener("click", kiraSemula));
+})();
+</script>
+</body>
+</html>
